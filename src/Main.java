@@ -1,28 +1,54 @@
 import java.util.Scanner;
 import java.lang.Exception;
 import java.io.File;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+// Main just calls functions
+// Vector is used to store position of each object
+//INPUT: x,y coord ; x,y velocity; mass
 public class Main {
     public static void main(String[] args) {
+        double radius_uni;
+        
+        //setting each body as an object
         try {
             File initFile = new File("init.txt");
             Scanner sc = new Scanner(initFile);
             sc.useDelimiter(Pattern.compile(" |\\n"));
 
-            double[] inital_state = new double[27];
-            int i = 0;
-            while (sc.hasNext()) {
-                String initstream = sc.next();
-                inital_state[i++] = Double.parseDouble(initstream);
-                System.out.println(inital_state[i-1]);
+            int N = Integer.parseInt(sc.next());
+            radius_uni = Double.parseDouble(sc.next());
+
+            Bodies[] particles = new Bodies[N];
+            for(int i = 0; i<N; i++){
+                double[] inital_state = new double[5];
+                for(int j = 0; j<5; j++){
+                    String initstream = sc.next();
+                    inital_state[j] = Double.parseDouble(initstream);
+                }
+                particles[i] = new Bodies(inital_state);
+                System.out.printf("Body " + i + ": ");
+                for(int j = 0; j<5; j++){
+                    System.out.printf(inital_state[j]+" ");
+                }
+                System.out.printf("\n");
             }
             sc.close();
         } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
+        }
+    }
+}
+
+class Bodies{
+    Vector<Double> state = new Vector<>(); //stores pos and vel
+    double mass;
+
+    Bodies(double[] input){
+        for(int i = 0; i<5; i++){
+            state.add(input[i]);
         }
     }
 }
