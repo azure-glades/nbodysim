@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
         double radius_uni;
         
-        //setting each body as an object
+        //creating objects for each particle
         try {
             File initFile = new File("init.txt");
             Scanner sc = new Scanner(initFile);
@@ -39,6 +39,8 @@ public class Main {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+
+        //to do: create a function to calculate the next position using physics
     }
 }
 
@@ -47,8 +49,9 @@ class Bodies{
     double mass;
 
     Bodies(double[] input){
-        for(int i = 0; i<5; i++){
+        for(int i = 0; i<4; i++){
             state.add(input[i]);
         }
+        mass = input[4];
     }
 }
