@@ -52,7 +52,7 @@ class Sim extends JPanel implements ActionListener {
     int n;
     long lastTime = 0;
     Body[] arr;
-    double G = 1;
+    double G =1;
 
     Sim(int no) {
         n = no;
@@ -201,7 +201,7 @@ class Quad{
 
 }
 class QuadTree{
-    double threshold=5;
+    double threshold=10;
     QuadTree NW,NE,SW,SE;
     Body body=null;
     boolean divided=false;
@@ -286,8 +286,9 @@ public class Main {
             Sim sim = new Sim(numBodies);
             int index=0;
             double[] initialState=new double[numBodies*5];
-            while(sc.hasNext())
-            {   
+            while(index!=numBodies*5)
+            {   System.out.println(index);
+             
                 initialState[index++]=Double.parseDouble(sc.next());
             }
             sim.initialize(initialState,radius_uni);
