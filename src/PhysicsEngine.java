@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 class PhysicsEngine extends JPanel implements ActionListener { //changed from Sim to PhysicsEngine
     int n;
@@ -24,7 +26,26 @@ class PhysicsEngine extends JPanel implements ActionListener { //changed from Si
             arr[i] = new Body(x, y, vx, vy, mass, radius);
         }
     }
+    public void start() {
+        lastTime = System.nanoTime();
+        ExecutorService pool = Executors.newFixedThreadPool(3);
 
+        // sets up runnable methods that will be done by threads in the pool
+        Runnable update_handler = this::update;
+        Runnable collision_handler = this::collision;
+        Runnable repainter = this::repaint;
+
+        new javax.swing.Timer(2, e -> {
+            pool.submit(update_handler);
+            pool.submit(collision_handler);
+            pool.submit(repainter);
+            //update();
+            //collision();
+            //repaint();
+        }).start();
+    }
+
+    // BRUTE FORCE
     // private void update() {
     // long now = System.nanoTime();
     // double dt = (now - lastTime) * 1e-9;
@@ -90,7 +111,7 @@ class PhysicsEngine extends JPanel implements ActionListener { //changed from Si
     public void actionPerformed(java.awt.event.ActionEvent e) {}
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) { // draws a body
         super.paintComponent(g);
         for (int i = 0; i < n; i++) {
             Body b = arr[i];
@@ -125,13 +146,6 @@ class PhysicsEngine extends JPanel implements ActionListener { //changed from Si
             }
         }
     }
-    public void start() {
-        lastTime = System.nanoTime();
-        new javax.swing.Timer(2, e -> {
-            update();
-            collision();
-            repaint();
-        }).start();
-    }
+
 
 }
