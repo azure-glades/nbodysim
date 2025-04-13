@@ -20,8 +20,8 @@ class Body {
         velocity.set(0,velocity.get(0)+(force.get(0)/mass)*dt);
         velocity.set(1,velocity.get(1)+(force.get(1)/mass)*dt);
 
-        position.set(0,velocity.get(0)+position.get(0));
-        position.set(1,velocity.get(1)+position.get(1));
+        position.set(0, position.get(0) + velocity.get(0) * dt);
+        position.set(1, position.get(1) + velocity.get(1) * dt);
     }
 
     void resetForce(){

@@ -12,28 +12,38 @@ class PhysicsEngine{
     }
 
     void simulate(){
-        for(int i = 0; i < this.particles.length; i++){
-            for(int j = i; j < this.particles.length; j++){
+        for (Body b : particles) {
+            b.resetForce();
+        }
+
+        for(int i = 0; i < num_of_particles; i++){
+            for(int j = i; j < num_of_particles; j++){
                 if(i != j){
                     updateForce(particles[i], particles[j]);
                 }
             }
         }
 
-        for(int i = 0; i < this.particles.length; i++){
-            particles[i].update(1);
+        for (Body b : particles) {
+            b.update(25000000); // small time-step (seconds)
         }
     }
 
     void updateForce(Body p1, Body p2){
-        double x1 = p1.position.get(0); double y1 = p1.position.get(1);
-        double x2 = p2.position.get(0); double y2 = p2.position.get(1);
-        double r_sqr = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1);
-        double G = 6.6743;
-        double force = G*p1.mass*p2.mass/r_sqr;
-        double angle = Math.atan((y2-y1)/(x2-x1));
+        double dx = p2.position.get(0) - p1.position.get(0);
+        double dy = p2.position.get(1) - p1.position.get(1);
+        double r2 = dx * dx + dy * dy;
+        double dist = Math.sqrt(r2 + 1e9); // epsilon to avoid div by 0
 
-        p1.force.set(0, p1.force.get(0)+force*Math.cos(angle));
-        p1.force.set(1, p1.force.get(1)+force*Math.sin(angle));
+        double G = 6.743;
+
+        double force = (G * p1.mass * p2.mass) / (r2 + 1e9);
+        double fx = force * dx / dist;
+        double fy = force * dy / dist;
+
+        p1.force.set(0, p1.force.get(0) + fx);
+        p1.force.set(1, p1.force.get(1) + fy);
+        p2.force.set(0, p2.force.get(0) - fx);
+        p2.force.set(1, p2.force.get(1) - fy);
     }
 }
