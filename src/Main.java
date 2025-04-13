@@ -1,7 +1,6 @@
 import java.util.Scanner;
 import java.lang.Exception;
 import java.io.File;
-import java.util.Vector;
 import java.util.regex.Pattern;
 
 // Main just calls functions
@@ -9,25 +8,27 @@ import java.util.regex.Pattern;
 //INPUT: x,y coord ; x,y velocity; mass
 public class Main {
     public static void main(String[] args) {
-        double radius_uni;
-        
+        double radius_uni = 0;
+        int N = 0;
+        Body[] particles = null;
+
         //creating objects for each particle
         try {
             File initFile = new File("init.txt");
             Scanner sc = new Scanner(initFile);
             sc.useDelimiter(Pattern.compile(" |\\n"));
 
-            int N = Integer.parseInt(sc.next());
+            N = Integer.parseInt(sc.next());
             radius_uni = Double.parseDouble(sc.next());
 
-            Bodies[] particles = new Bodies[N];
+            particles = new Body[N];
             for(int i = 0; i<N; i++){
                 double[] inital_state = new double[5];
                 for(int j = 0; j<5; j++){
                     String initstream = sc.next();
                     inital_state[j] = Double.parseDouble(initstream);
                 }
-                particles[i] = new Bodies(inital_state);
+                particles[i] = new Body(inital_state);
                 System.out.printf("Body " + i + ": ");
                 for(int j = 0; j<5; j++){
                     System.out.printf(inital_state[j]+" ");
@@ -40,24 +41,11 @@ public class Main {
             e.printStackTrace();
         }
 
-        //to do: create a function to calculate the next position using physics
+        System.out.println(" ");
+        PhysicsEngine runner = new PhysicsEngine(N,radius_uni, particles);
+        runner.simulate();
+        for(int j = 0; j<5; j++){
+            System.out.printf("Body %d (%f , %f) (%f , %f) %f \n",j,particles[j].position.get(0),particles[j].position.get(0),particles[j].velocity.get(0),particles[j].velocity.get(0),particles[j].mass);
+        }
     }
-}
-
-class PhysicsEngine{
-    Bodies[] particles;
-    int num_of_particles;
-    double radius_univ;
-
-
-    void updateNextPositions(){}
-
-    PhysicsEngine(int n, double radius, Bodies[] particles){
-        num_of_particles = n;
-        radius_univ = radius;
-        this.particles = particles;
-    }
-
-
-
 }
