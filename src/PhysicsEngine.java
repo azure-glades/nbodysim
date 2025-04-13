@@ -2,13 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-class Sim extends JPanel implements ActionListener {
+class PhysicsEngine extends JPanel implements ActionListener { //changed from Sim to PhysicsEngine
     int n;
     long lastTime = 0;
     Body[] arr;
     double G =1;
 
-    Sim(int no) {
+    PhysicsEngine(int no) {
         n = no;
         arr = new Body[n];
     }
@@ -102,7 +102,7 @@ class Sim extends JPanel implements ActionListener {
     }
 
 
-    void collision()
+    void collision() //handles collisions with border
     {
         for(Body b: arr)
         {
