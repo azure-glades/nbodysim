@@ -44,3 +44,20 @@ public class Main {
     }
 }
 
+class PhysicsEngine{
+    Bodies[] particles;
+    int num_of_particles;
+    double radius_univ;
+
+
+    void updateNextPositions(){}
+
+    PhysicsEngine(int n, double radius, Bodies[] particles){
+        num_of_particles = n;
+        radius_univ = radius;
+        this.particles = particles;
+    }
+
+
+
+}
