@@ -9,3 +9,9 @@ reached
 by 20% atleast). Benchmark and compare
 - Graphical Represation: Display the bodies using graphics libraries to visualize motion
 - Scalability: Run it on large test cases (100+ bodies)
+
+
+
+
+
+![Banner](src/performance_graph.png)
