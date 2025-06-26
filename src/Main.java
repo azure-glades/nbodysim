@@ -42,24 +42,24 @@ public class Main {
     public static void main(String[] args) 
     {
 
-    Scanner userInput = new Scanner(System.in);
+    // Scanner userInput = new Scanner(System.in);
     
-    // uncomment when in automatic mode
-    System.out.print("Enter number of bodies: ");
-    int numBodies = userInput.nextInt();
+    // // uncomment when in automatic mode
+    // System.out.print("Enter number of bodies: ");
+    // int numBodies = userInput.nextInt();
     
-    System.out.print("Enter value of G (gravitational constant): ");
-    double G = userInput.nextDouble();
+    // System.out.print("Enter value of G (gravitational constant): ");
+    // double G = userInput.nextDouble();
     
-    System.out.print("Enter radius for all bodies: ");
-    double radius = userInput.nextDouble();
+    // System.out.print("Enter radius for all bodies: ");
+    // double radius = userInput.nextDouble();
     
     try {
       
-        generateInitFile(numBodies, G, radius); //uncomment for init file generation
+        // generateInitFile(numBodies, G, radius); //uncomment for init file generation
         
      
-        File initFile = new File("./random.txt");
+        File initFile = new File("./init_manual2.txt");
         Scanner sc = new Scanner(initFile);
         sc.useDelimiter(Pattern.compile(" |\\n"));
 
@@ -95,7 +95,7 @@ public class Main {
         // System.out.println("Maximized height: " + maxHeight);
         sim.start();
         sc.close();
-        userInput.close();
+        // userInput.close();
         
         
     } catch (Exception e) {

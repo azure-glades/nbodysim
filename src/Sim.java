@@ -40,7 +40,7 @@ public class Sim extends JPanel {
         
         // Initialize spatial grid with cell size based on average body radius
         double cellSize = rad * 4; // Cell size should be larger than body diameter
-        spatialGrid = new SpatialHashGrid(cellSize, 800, 800);
+        spatialGrid = new SpatialHashGrid(cellSize, 1850, 1053);
     }
 
     // Efficient collision detection using spatial hashing - O(n) average case
@@ -106,7 +106,7 @@ public class Sim extends JPanel {
         }
         g.setColor(Color.BLACK);
         g.setFont(new Font("SansSerif", Font.BOLD, 18));
-        g.drawString("FPS: " +fps, 10, 20); // 'fps' must be a class variable
+        g.drawString("FPS: " +fps, 10, 20); 
     }
 
     void collision() {
