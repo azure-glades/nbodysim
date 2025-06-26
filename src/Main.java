@@ -9,7 +9,7 @@ import java.awt.Graphics;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.awt.*;
 
 
 
@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 public class Main {
     private static void generateInitFile(int numBodies, double G, double radius) throws IOException {
     Random rand = new Random();
-    PrintWriter writer = new PrintWriter(new FileWriter("./init.txt"));
+    PrintWriter writer = new PrintWriter(new FileWriter("./random.txt"));
     
     // First line: number of bodies
     writer.println(numBodies);
@@ -27,8 +27,8 @@ public class Main {
     
     // Generate random bodies
     for (int i = 0; i < numBodies; i++) {
-        double x = 50 + rand.nextDouble() * 700;  
-        double y = 50 + rand.nextDouble() * 700;  
+        double x = 50 + rand.nextDouble() * 1750;  
+        double y = 50 + rand.nextDouble() * 900;  
         double vx = (rand.nextDouble() - 0.5) * 100; 
         double vy = (rand.nextDouble() - 0.5) * 100;  
         double mass = 10 + rand.nextDouble() * 150;   
@@ -59,7 +59,7 @@ public class Main {
         generateInitFile(numBodies, G, radius); //uncomment for init file generation
         
      
-        File initFile = new File("./init.txt");
+        File initFile = new File("./random.txt");
         Scanner sc = new Scanner(initFile);
         sc.useDelimiter(Pattern.compile(" |\\n"));
 
@@ -68,7 +68,7 @@ public class Main {
         double radius_uni = Double.parseDouble(sc.next());
         
         Sim sim = new Sim(fileNumBodies);
-        sim.G = G; 
+        sim.G = 1; 
         int index = 0;
         double[] initialState = new double[fileNumBodies * 5];
         
@@ -80,17 +80,28 @@ public class Main {
         
         JFrame frame = new JFrame("N-Body Simulator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
+        frame.setSize(1850,1053);
+        // frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+       
         frame.add(sim);
         frame.setVisible(true);
+        // GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        // Rectangle usableBounds = ge.getMaximumWindowBounds();
 
+        // int maxWidth = usableBounds.width;
+        // int maxHeight = usableBounds.height;
+
+        // System.out.println("Maximized width: " + maxWidth);
+        // System.out.println("Maximized height: " + maxHeight);
         sim.start();
         sc.close();
         userInput.close();
+        
         
     } catch (Exception e) {
         System.out.println("An error occurred.");
         e.printStackTrace();
     }
 }
+
 }

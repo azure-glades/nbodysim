@@ -9,12 +9,17 @@ import java.awt.Graphics;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.awt.Color;
+import java.awt.Font;
 
 public class Sim extends JPanel {
     int n;
     long lastTime = 0;
     Body[] arr;
     double G = 1;
+    int frame_count=0;
+    long frame_time=0;
+    int fps=0;
     private SpatialHashGrid spatialGrid;
 
     Sim(int no) {
@@ -53,6 +58,16 @@ public class Sim extends JPanel {
 
     private void update() {
         long now = System.nanoTime();
+        if((now-frame_time)<1e+9)
+        {
+            frame_count+=1;
+            // System.out.println((now-lastTime));
+        }else{
+            fps=frame_count;
+            // System.out.println(frame_count);
+            frame_count=0;
+            frame_time=System.nanoTime();
+        }
         double dt = (now - lastTime) * 1e-9;
         lastTime = now;
 
@@ -89,6 +104,9 @@ public class Sim extends JPanel {
             int d = (int) (2 * b.radius);
             g.fillOval(drawX, drawY, d, d);
         }
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("SansSerif", Font.BOLD, 18));
+        g.drawString("FPS: " +fps, 10, 20); // 'fps' must be a class variable
     }
 
     void collision() {
@@ -111,6 +129,7 @@ public class Sim extends JPanel {
 
     public void start() {
         lastTime = System.nanoTime();
+        frame_time= System.nanoTime();
         new javax.swing.Timer(2, e -> {
             // System.out.println("frame complete");
             update();
