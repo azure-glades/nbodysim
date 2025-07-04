@@ -56,8 +56,46 @@ public class Sim extends JPanel {
         spatialGrid.handleCollisions();
     }
 
+    // private void update() {
+    //     long now = System.nanoTime();
+    //     if((now-frame_time)<1e+9)
+    //     {
+    //         frame_count+=1;
+    //         // System.out.println((now-lastTime));
+    //     }else{
+    //         fps=frame_count;
+    //         // System.out.println(frame_count);
+    //         frame_count=0;
+    //         frame_time=System.nanoTime();
+    //     }
+    //     double dt = (now - lastTime) * 1e-9;
+    //     lastTime = now;
+
+    //     double minX = 0, minY = 0, maxX = getWidth(), maxY = getHeight();
+    //     double size = Math.max(maxX - minX, maxY - minY);
+
+    //     Quad rootQuad = new Quad(minX + size / 2, minY + size / 2, size);
+    //     QuadTree tree = new QuadTree(rootQuad);
+
+    //     for (Body b : arr) {
+    //         b.fx = b.fy = 0;
+    //         tree.insert(b);
+    //     }
+
+    //     for (Body b : arr) {
+    //         tree.Force(b,this.G);
+    //     }
+        
+    //     for (Body b : arr) {
+    //         b.vx += b.fx / b.mass * dt;
+    //         b.vy += b.fy / b.mass * dt;
+    //         b.x += b.vx * dt;
+    //         b.y += b.vy * dt;
+    //     }
+    // }
     private void update() {
-        long now = System.nanoTime();
+        
+         long now = System.nanoTime();
         if((now-frame_time)<1e+9)
         {
             frame_count+=1;
@@ -68,10 +106,34 @@ public class Sim extends JPanel {
             frame_count=0;
             frame_time=System.nanoTime();
         }
-        double dt = (now - lastTime) * 1e-9;
-        lastTime = now;
+    double dt = (now - lastTime) * 1e-9;
+    lastTime = now;
+if(Main.mode){
+    // Reset forces
+    for (Body b : arr) {
+        b.fx = 0;
+        b.fy = 0;
+    }
 
-        double minX = 0, minY = 0, maxX = getWidth(), maxY = getHeight();
+    // Brute-force pairwise interaction: gravity + elastic collisions
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            Body bi = arr[i];
+            Body bj = arr[j];
+
+            // Add gravitational forces
+            bi.addForce(bj, this.G);
+            bj.addForce(bi, this.G); // Newton's 3rd law
+
+            // Check and handle collisions
+            if (bi.collidesWith(bj)) {
+                handleElasticCollision(bi, bj);
+            }
+        }
+    }
+}else{
+
+     double minX = 0, minY = 0, maxX = getWidth(), maxY = getHeight();
         double size = Math.max(maxX - minX, maxY - minY);
 
         Quad rootQuad = new Quad(minX + size / 2, minY + size / 2, size);
@@ -85,14 +147,56 @@ public class Sim extends JPanel {
         for (Body b : arr) {
             tree.Force(b,this.G);
         }
-        
-        for (Body b : arr) {
-            b.vx += b.fx / b.mass * dt;
-            b.vy += b.fy / b.mass * dt;
-            b.x += b.vx * dt;
-            b.y += b.vy * dt;
-        }
+
+         handleCollisions();
+
+
+}
+    // Update positions and velocities
+    for (Body b : arr) {
+        b.vx += b.fx / b.mass * dt;
+        b.vy += b.fy / b.mass * dt;
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
     }
+}
+private void handleElasticCollision(Body b1, Body b2) {
+    double dx = b2.x - b1.x;
+    double dy = b2.y - b1.y;
+    double distance = Math.sqrt(dx * dx + dy * dy);
+    
+    if (distance == 0) return; // Prevent division by zero
+
+    // Normalize collision vector
+    dx /= distance;
+    dy /= distance;
+
+    // Relative velocity
+    double dvx = b2.vx - b1.vx;
+    double dvy = b2.vy - b1.vy;
+    double dvn = dvx * dx + dvy * dy;
+
+    if (dvn > 0) return; // Bodies moving apart
+
+    // Elastic collision impulse
+    double impulse = 2 * dvn / (b1.mass + b2.mass);
+
+    b1.vx += impulse * b2.mass * dx;
+    b1.vy += impulse * b2.mass * dy;
+    b2.vx -= impulse * b1.mass * dx;
+    b2.vy -= impulse * b1.mass * dy;
+
+    // Resolve overlap
+    double overlap = (b1.radius + b2.radius) - distance;
+    if (overlap > 0) {
+        double separationX = dx * overlap * 0.5;
+        double separationY = dy * overlap * 0.5;
+        b1.x -= separationX;
+        b1.y -= separationY;
+        b2.x += separationX;
+        b2.y += separationY;
+    }
+}
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -104,21 +208,27 @@ public class Sim extends JPanel {
             int d = (int) (2 * b.radius);
             g.fillOval(drawX, drawY, d, d);
         }
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("SansSerif", Font.BOLD, 18));
-        g.drawString("FPS: " +fps, 10, 20); 
+        // g.setColor(Color.BLACK);
+        // g.setFont(new Font("SansSerif", Font.BOLD, 18));
+        // g.drawString("FPS: " +fps, 10, 20); 
+        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        topFrame.setTitle("N-Body Simulator rendering with FPS: " + fps);
+
+
     }
 
     void collision() {
+        // System.out.print(getHeight());
+        // System.out.print(getWidth());
         for (Body b : arr) {
-            if (b.x + b.radius >= getWidth()) {
+            if (b.x + b.radius >= 1850) {
                 b.vx = -Math.abs(b.vx);
             }
             if (b.x - b.radius < 0) {
                 b.vx = Math.abs(b.vx);
             }
             
-            if (b.y + b.radius >= getHeight()) {
+            if (b.y + b.radius >= 1016) {
                 b.vy = -Math.abs(b.vy);
             }
             if (b.y - b.radius < 0) {
@@ -133,7 +243,7 @@ public class Sim extends JPanel {
         new javax.swing.Timer(2, e -> {
             // System.out.println("frame complete");
             update();
-            handleCollisions(); // Use efficient collision detection
+            // Use efficient collision detection
             collision();
             repaint();
         }).start();

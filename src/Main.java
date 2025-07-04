@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.regex.Pattern;
 import javax.swing.*;
-import java.awt.Graphics;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +15,7 @@ import java.awt.*;
 
 
 public class Main {
+    public static boolean mode=false;
     private static void generateInitFile(int numBodies, double G, double radius) throws IOException {
     Random rand = new Random();
     PrintWriter writer = new PrintWriter(new FileWriter("./random.txt"));
@@ -77,14 +78,32 @@ public class Main {
         }
         
         sim.initialize(initialState, radius_uni);
-        
-        JFrame frame = new JFrame("N-Body Simulator");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1850,1053);
-        // frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-       
-        frame.add(sim);
-        frame.setVisible(true);
+JFrame frame = new JFrame("N-Body Simulator");
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setSize(1850, 1053);
+
+
+JLayeredPane layeredPane = new JLayeredPane();
+layeredPane.setPreferredSize(new Dimension(1850, 1053));
+
+sim.setBounds(0, 0, 1850, 1053);  // Full window
+layeredPane.add(sim, JLayeredPane.DEFAULT_LAYER);
+
+
+JToggleButton toggle = new JToggleButton("Barnes-hut");
+toggle.setBounds(10, 5, 130, 30); // Top-left corner
+layeredPane.add(toggle, JLayeredPane.PALETTE_LAYER);
+
+toggle.addItemListener(e -> {
+    mode = toggle.isSelected(); // true if ON, false if OFF
+    toggle.setText(mode ? "Brute force" : "Barnes-hut");
+});
+
+// Add layeredPane to frame
+frame.setContentPane(layeredPane);
+frame.setVisible(true);
+
+
         // GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         // Rectangle usableBounds = ge.getMaximumWindowBounds();
 
